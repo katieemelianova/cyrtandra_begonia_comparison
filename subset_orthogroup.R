@@ -17,4 +17,4 @@ indices<-rowSums(o[,coln] !=0) > 5
 o_subset<-o[indices,]
 
 # write to file
-write_delim(o_subset, "testing_subset_orthogroupcounts", delim = "\t", quote="none")
+write_delim(o_subset, "Orthogroups.GeneCount.subset.tsv", delim = "\t", quote="none")
