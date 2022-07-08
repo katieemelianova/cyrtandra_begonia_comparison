@@ -1,0 +1,201 @@
+# this code was the first iteration of how I thoight I would codon align orthogroups
+# It's a bit overegged, involving multiple alignments, creating a distmat and choosing the correct translation frame based on similarity to Athaliana ortholog
+# I ended up abandoning this method as it's way over complicated and ended up using long_orfs to simply find the longest ORF
+# I have kept the code for any later inspo
+
+import glob
+
+#orthogroups=glob.glob("fastas/OrthoFinder/Results_Apr22/Single_Copy_Orthologue_Sequences/OG*fa")
+
+orthogroups=glob.glob("at_containing_test_orths/OG*.fa")
+
+rule align:
+    input: "{orthogroup}"
+    output: "{orthogroup}.mafft"
+    shell:
+        """
+        mafft --thread 8  --adjustdirectionaccurately {input} > {output}
+        """
+
+rule trim:
+    input: "{orthogroup}.mafft"
+    output: "{orthogroup}.mafft.trim"
+    shell:
+        """
+        trimal  -in {input} -out {output}
+        """
+rule ungap:
+    input: "{orthogroup}.mafft.trim"
+    output: "{orthogroup}.mafft.trim.ungap"
+    shell:
+        """
+        awk '/^>/ {{printf("\\n%s\\n",$0);next; }} {{ printf("%s",$0);}}  END {{printf("\\n");}}' < {input} | tr -d "-" > {output} 
+        """
+
+rule length_filter:
+    input: "{orthogroup}.mafft.trim.ungap"
+    output: "{orthogroup}.length_trim"
+    shell:
+        """
+        seqtk seq -L 300 {input} > {output}
+        """
+
+rule align_second:
+    input: "{orthogroup}.length_trim"
+    output: "{orthogroup}.length_trim.align"
+    shell:
+        """
+        mafft --thread 8  --adjustdirectionaccurately {input} > {output}
+        """
+
+rule trim_second:
+    input: "{orthogroup}.length_trim.align"
+    output: "{orthogroup}.length_trim.mafft.seqoverlaptrim"
+    shell:
+        """
+        if [ -s {input} ]; then trimal -resoverlap 0.1 -seqoverlap 50  -in {input} -out {output}; else touch {output}; fi
+        """
+
+rule translate:
+    input: "{orthogroup}.length_trim.mafft.seqoverlaptrim"
+    output: "{orthogroup}.length_trim.mafft.seqoverlaptrim.prot"
+    shell:
+        """
+        if [ -s {input} ]; then transeq -sequence {input} -frame 6 -outseq {output} -sformat pearson; else touch {output}; fi
+        """
+
+rule align_translation:
+    input: "{orthogroup}.length_trim.mafft.seqoverlaptrim.prot" 
+    output: "{orthogroup}.length_trim.mafft.seqoverlaptrim.prot_with_at"
+    shell:
+        """
+        if [ -s {input} ]; then
+        ath_seqs=`grep ">AT" {input} | head -1 | cut -d"|" -f 1`
+        for i in $ath_seqs; do grep -A 1 $i TAIR10_pep_20101214_rename >> {input}.ath_seqs; done
+        grep -vwE "\-\-" {input}.ath_seqs > {input}.ath_seqs_nodash
+        cat {input} {input}.ath_seqs_nodash > {input}.tmp_at
+        mafft-linsi {input}.tmp_at > {output}
+        rm {input}.ath_seqs_nodash {input}.tmp_at {input}.ath_seqs
+        else touch {output}; fi
+        """
+
+rule create_distmat:
+    input: "{orthogroup}.length_trim.mafft.seqoverlaptrim.prot_with_at"
+    output: "{orthogroup}.length_trim.prot.distmat"
+    shell:
+        """
+        if [ -s {input} ]; then
+        clustalo --infile {input} --distmat-out {output} --percent-id --full 
+        else touch {output}; fi
+        """
+
+rule parse_distmat:
+    input: "{orthogroup}.length_trim.prot.distmat"
+    output: "{orthogroup}.correct_translation"
+    run:
+        f = open(input[0], "r")
+        lines = f.readlines()
+        seqnames = []
+        id_dict = {}
+        for line in lines:
+            line = line.rstrip("\n")
+            name = line.split(" ")[0]
+            ids = line.split(" ")[1:]
+            ids = [i for i in ids if i != '']
+            if ids:
+                seqnames.append(name)
+                id_dict[name] = ids
+        ref_seqs = [i for i in seqnames if i.endswith("reference")]
+        good_seqs = []
+        for seq in ref_seqs:
+            count = 0
+            for i in id_dict[seq]:
+                i = float(i)
+                if i > 50:
+                    good_seqs.append(seqnames[count])
+                count +=1
+        good_seqs = [i for i in good_seqs if "reference" not in i]
+        outfile = open(output[0], "w")
+        prot_outfile = output[0] + ".prot"
+        outfile_prot = open(prot_outfile, "w")
+        for seq in good_seqs:
+            outfile_prot.write(seq + "\n")
+        outfile_prot.close()
+        good_seqs = list(set(good_seqs))
+        good_seqs = [i.lstrip("_R_") for i in good_seqs]
+        good_seqs = [i[:-0-2] for i in good_seqs]
+        for seq in good_seqs:
+            outfile.write(seq + "\n")
+        outfile.close()
+
+
+rule get_correct_translations:
+    input:
+        original_fasta="{orthogroup}.length_trim.mafft.seqoverlaptrim",
+        correct_reading_frame="{orthogroup}.correct_translation",
+        all_translations_fasta="{orthogroup}.length_trim.mafft.seqoverlaptrim.prot"
+    output: 
+        nucl_out="{orthogroup}.correct_reading_frame",
+        prot_out="{orthogroup}.correct_reading_frame.prot"
+    shell:
+        """
+        set +o pipefail;
+        translation_lines=`cat {input.correct_reading_frame} | wc -l`
+        original_fasta=`grep ">" {input.original_fasta} | wc -l`
+        if [ "$original_fasta" -eq "$translation_lines" ]; then
+        sed -i s/_R_//g {input.original_fasta}; 
+        seqtk subseq {input.original_fasta} {input.correct_reading_frame} > {output.nucl_out}; 
+        seqtk subseq {wildcards.orthogroup}.length_trim.mafft.seqoverlaptrim.prot {wildcards.orthogroup}.correct_translation.prot > {output.prot_out};
+        else touch {output}; fi
+        """
+
+#rule translational_align:
+#    input:
+#    output:
+#    shell:
+#        """
+#        
+#        """
+
+rule realign_correct_translations:
+    input: "{orthogroup}.correct_reading_frame.prot"
+    output: "{orthogroup}.correct_reading_frame.aln"
+    shell:
+        """
+        if [ -s {input} ]; then
+        clustalo -i {input} -o {output}
+        sed -i 's/X//g' {output}
+        else touch {output}; fi
+        """
+
+rule translational_align:
+    input: 
+        protein="{orthogroup}.correct_reading_frame.aln",
+        nucleotide="{orthogroup}.correct_reading_frame"
+    output: "{orthogroup}.correct_reading_frame.pal2nal"
+    shell:
+        """
+        pal2nal.pl {input.protein} {input.nucleotide} -nogap -output fasta > {output}
+        """
+
+rule replace_stop_codons:
+    input: "{orthogroup}.correct_reading_frame.pal2nal"
+    output: "{orthogroup}.correct_reading_frame.macse"
+    shell:
+        """
+        macse -prog exportAlignment -align {input} -codonForInternalStop NNN -out_NT {output} 
+        """
+
+
+#rule tree:
+#    input: "{orthogroup}.mafft.trim"
+#    output: "{orthogroup}.tree"
+#    shell:
+#        """
+#        ~/software/fasttree/FastTree -nt {input} > {output}
+#        """
+
+rule doit:
+    input:
+        expand("{orthogroup}.correct_reading_frame.macse", orthogroup=orthogroups)
+

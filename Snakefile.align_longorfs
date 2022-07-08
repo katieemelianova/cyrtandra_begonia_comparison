@@ -1,0 +1,74 @@
+import glob
+
+#orthogroups=glob.glob("fastas/OrthoFinder/Results_Apr22/Single_Copy_Orthologue_Sequences/OG*fa")
+
+orthogroups=glob.glob("at_containing_test_orths/OG*.fa")
+
+
+rule align:
+    input: "{orthogroup}"
+    output: "{orthogroup}.aln"
+    shell:
+        """
+        mafft --adjustdirectionaccurately {input} > {output}
+        """
+
+rule trim:
+    input: "{orthogroup}.aln"
+    output: "{orthogroup}.trim"
+    shell:
+        """
+        trimal -resoverlap 0.5 -seqoverlap 50 -maxidentity 0.7  -in {input} -out {output}
+        if [ -s {output} ]; then echo " "; else touch {output}; fi
+        """
+
+rule ungap:
+    input: "{orthogroup}.trim"
+    output: "{orthogroup}.trim.ungap"
+    shell:
+        """
+        awk '/^>/ {{printf("\\n%s\\n",$0);next; }} {{ printf("%s",$0);}}  END {{printf("\\n");}}' < {input} | tr -d "-" > {output} 
+        """
+
+
+rule run_transdecoder:
+    input: "{orthogroup}.trim.ungap"
+    output: 
+        cds="{orthogroup}_transdecoder/longest_orfs.cds",
+        prot="{orthogroup}_transdecoder/longest_orfs.pep"
+    shell:
+        """
+        TransDecoder.LongOrfs -t {input} -m 200 --output_dir {wildcards.orthogroup}_transdecoder
+        """
+
+rule align_peptides:
+    input: "{orthogroup}_transdecoder/longest_orfs.pep"
+    output: "{orthogroup}_transdecoder/longest_orfs.pep.mafft"
+    shell:
+        """
+        mafft {input} > {output} 
+        """
+
+rule run_pal2nal:
+    input: 
+        pep_aln="{orthogroup}_transdecoder/longest_orfs.pep.mafft",
+        long_orf="{orthogroup}_transdecoder/longest_orfs.cds"
+    output: "{orthogroup}.pal2nal"
+    shell:
+        """
+        pal2nal.pl {input.pep_aln} {input.long_orf} -output paml > {output}
+        """
+
+rule get_dnds:
+    input: "{orthogroup}.pal2nal"
+    output: "{orthogroup}.dnds"
+    shell:
+        """
+        set +o pipefail;
+        python3 biopaml.py {input} > {output} 
+        """
+        
+
+rule doit:
+    input:
+        expand("{orthogroup}.dnds", orthogroup=orthogroups) 
