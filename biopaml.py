@@ -3,7 +3,6 @@ import pprint
 import sys
 
 alignment_file=sys.argv[1]
-
 orthogroup=alignment_file.split(".")[0]
 
 cml=codeml.Codeml(alignment=alignment_file, tree="no_tree", out_file="bio_results", working_dir="./")
@@ -28,10 +27,31 @@ try:
         other_seqs=[i for i in seqs if not i == s]
         entry=results.get("pairwise")[s]
         for comparison in entry:
-            to_print="\t".join([orthogroup, s, comparison, str(entry[comparison].get("omega"))])
+            dN=str(entry[comparison].get("dN"))
+            dS=str(entry[comparison].get("dS"))
+            omega=str(entry[comparison].get("omega"))
+            to_print="\t".join([orthogroup, s, comparison, omega, dN, dS])
             print(to_print)
 except:
     exit()
+
+
+
+
+cml.run()
+results = codeml.read(results_file="bio_results")
+seqs=list(results.get("pairwise").keys())
+for s in seqs:
+    other_seqs=[i for i in seqs if not i == s]
+    entry=results.get("pairwise")[s]
+    for comparison in entry:
+        dN=str(entry[comparison].get("dN"))
+        dS=str(entry[comparison].get("dS"))
+        omega=str(entry[comparison].get("omega"))
+        to_print="\t".join([orthogroup, s, comparison, omega, dN, dS])
+        print(to_print)
+
+
 
 
 # example of how to select out different species from dn/ds file

@@ -1,8 +1,7 @@
 import glob
 
-#orthogroups=glob.glob("fastas/OrthoFinder/Results_Apr22/Single_Copy_Orthologue_Sequences/OG*fa")
 
-orthogroups=glob.glob("at_containing_test_orths/OG*.fa")
+orthogroups=glob.glob("orthogroup_subset_fastas/OG*.fa")
 
 
 rule align:
@@ -18,7 +17,7 @@ rule trim:
     output: "{orthogroup}.trim"
     shell:
         """
-        trimal -resoverlap 0.5 -seqoverlap 50 -maxidentity 0.7  -in {input} -out {output}
+        trimal -resoverlap 0.5 -seqoverlap 50 -maxidentity 0.99  -in {input} -out {output}
         if [ -s {output} ]; then echo " "; else touch {output}; fi
         """
 
