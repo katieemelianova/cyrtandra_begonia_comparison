@@ -16,6 +16,23 @@ ln -s ~/references/Dorcoceras/Dorcoceras_assembly/GCA_001598015.1_Boea_hygrometr
 ln -s ~/references/Hillebrandia/Hsand_mRNA.fasta orthofinder_fastas/hillebrandia.fasta
 ln -s ~/references/Streptocarpus/PG_Sr_cds_nuc.fa orthofinder_fastas/streptocarpus.fasta
 
+########################################
+#    rename fastas to make ID easier   #
+########################################
+
+
+#sed -i 's/>/>athaliana_/g' orthofinder_fastas/athaliana.fasta
+#sed -i 's/>/>bconchifolia_/g' orthofinder_fastas/conchifolia.fasta
+#sed -i 's/>/>bplebeja_/g' orthofinder_fastas/plebeja.fasta
+#sed -i 's/>/>ccrockerella_/g' orthofinder_fastas/crockerella.fasta
+#sed -i 's/>/>cserratifolia_/g' orthofinder_fastas/serratifolia.fasta
+#sed -i 's/>/>dglomerata_/g' orthofinder_fastas/datisca.fasta
+#sed -i 's/>/>dhygrometrica_/g' orthofinder_fastas/dorcoceras.fasta
+#sed -i 's/>/>hsandwicensis_/g' orthofinder_fastas/hillebrandia.fasta
+#sed -i 's/>/>srexii_/g' orthofinder_fastas/streptocarpus.fasta
+
+
+
 #######################################
 #        kick off orthofinder run     #
 #######################################
@@ -27,16 +44,16 @@ ln -s ~/references/Streptocarpus/PG_Sr_cds_nuc.fa orthofinder_fastas/streptocarp
 #     filter orthofinder counts by orthogroups with all non-zero values     #
 #############################################################################
 
-Rscript subset_orthogroup.R
+#Rscript subset_orthogroup.R
 
 #############################################################################
 #       use colnames of subset orthofinder to get orthogoup fastas          #
 #############################################################################
 
 
-mkdir orthogroup_subset_fastas
-orths=`cut -f 1 Orthogroups.GeneCount.subset.tsv`
-for o in $orths; do cp orthofinder_fastas/OrthoFinder/Results_Jul08/Orthogroup_Sequences/$o.fa orthogroup_subset_fastas; done
+#mkdir orthogroup_subset_fastas
+#orths=`cut -f 1 Orthogroups.GeneCount.subset.tsv`
+#for o in $orths; do cp orthofinder_fastas/OrthoFinder/Results_Jul08/Orthogroup_Sequences/$o.fa orthogroup_subset_fastas; done
 
 ###########################################################
 #       run codon alignment on subset orthogroups         #
