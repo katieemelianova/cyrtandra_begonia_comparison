@@ -119,18 +119,29 @@ ggplot(data=to_barplot, aes(x=variable, y=value, fill = analysis)) +
   geom_bar(stat="identity", position=position_dodge())         
 
 
+##########################################################
+#     all vs separate orthogroup size       #
+##########################################################
 
-athaliana       conchifolia     crockerella     datisca dorcoceras      hillebrandia    plebeja serratifolia    streptocarpus
-Number of genes 
-Number of genes in orthogroups  
-Number of unassigned genes      
-Percentage of genes in orthogroups      
-Percentage of unassigned genes  
-Number of orthogroups containing species        
-Percentage of orthogroups containing species    
-Number of species-specific orthogroups  
-Number of genes in species-specific orthogroups 
-Percentage of genes in species-specific orthogroups     
+bp_begonia<-read_tsv("~/Desktop/Cyrtandra/orthogroup_comp_boxplots/orthofinder_fastas_begonia_Orthogroups.GeneCount.tsv") %>% 
+  melt() %>% 
+  mutate(analysis="independent")
+
+bp_cyrtandra<-read_tsv("~/Desktop/Cyrtandra/orthogroup_comp_boxplots/orthofinder_fastas_cyrtandra_Orthogroups.GeneCount.tsv") %>% 
+  melt() %>% 
+  mutate(analysis="independent")
+
+bp_all<-read_tsv("~/Desktop/Cyrtandra/orthogroup_comp_boxplots/orthofinder_fastas_Orthogroups.GeneCount.tsv") %>% 
+  melt() %>% 
+  mutate(analysis="all")
+
+bp_everything<-rbind(bp_begonia, bp_cyrtandra, bp_all)
+
+bp_everything<-bp_everything %>% filter(value < 5 & variable != "Total" & variable != "athaliana")
+
+ggplot(bp_everything, aes(x=variable, y=(value), fill=analysis)) + 
+  geom_violin()
+  
 #################################################
 #        cumulative orthogrop proportion        #
 #################################################
