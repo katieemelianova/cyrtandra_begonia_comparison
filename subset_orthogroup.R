@@ -2,8 +2,9 @@ library(readr)
 library(magrittr)
 
 # read in the orthogroup size tsv
-#o<-read_tsv("begonia_cyrtandra_fastas/OrthoFinder/Results_Jul04/Orthogroups/Orthogroups.GeneCount.tsv")
-o<-read_tsv("/home/kemelian/cyrtandra_begonia_comparison/orthofinder_fastas/OrthoFinder/Results_Jul11/Orthogroups/Orthogroups.GeneCount.tsv")
+o <- file("stdin")
+o <- read_tsv(o)
+#o<-read_tsv("orthofinder_fastas/OrthoFinder/Results_Aug22/Orthogroups/Orthogroups.GeneCount.tsv")
 
 # the first column is orthogroup and the last is total
 # this gets the column names excluding the first and the last to give just orthogroup counts

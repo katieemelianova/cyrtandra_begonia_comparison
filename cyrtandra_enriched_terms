@@ -1,0 +1,39 @@
+1	GO:0170041	non-proteinogenic amino acid metabolic process	29	7	1.04	5.7e-05	non-proteinogenic amino acid metabolic process	30	7	1.09	7.7e-05
+2	GO:0009658	chloroplast organization	228	18	8.16	0.0012	chloroplast organization	249	18	9.01	0.00196
+3	GO:0017038	protein import	14	4	0.5	0.0012	protein import	11	4	0.4	0.00046
+4	GO:1905037	autophagosome organization	39	5	1.4	0.0022	autophagosome organization	49	4	1.77	0.00813
+5	GO:0009820	alkaloid metabolic process	18	4	0.64	0.0033	alkaloid metabolic process	26	4	0.94	0.01346
+6	GO:0019761	glucosinolate biosynthetic process	19	4	0.68	0.0041	glucosinolate biosynthetic process	17	3	0.61	0.02194
+7	GO:0032543	mitochondrial translation	19	4	0.68	0.0041	mitochondrial translation	21	4	0.76	0.00621
+8	GO:1901606	alpha-amino acid catabolic process	64	6	2.29	0.0050	alpha-amino acid catabolic process	68	6	2.46	0.00620
+9	GO:0009695	jasmonic acid biosynthetic process	21	4	0.75	0.0060	jasmonic acid biosynthetic process	25	5	0.9	0.00177
+10	GO:0015706	nitrate transmembrane transport	21	4	0.75	0.0060	nitrate transmembrane transport	16	4	0.58	0.00218
+11	GO:0000076	DNA replication checkpoint signaling	11	3	0.39	0.0061	DNA replication checkpoint signaling	11	3	0.4	0.00625
+12	GO:0072526	pyridine-containing compound catabolic process	108	5	3.86	0.0073	pyridine-containing compound catabolic process	99	5	3.58	0.00748
+13	GO:0071222	cellular response to lipopolysaccharide	12	3	0.43	0.0079	cellular response to lipopolysaccharide	11	3	0.4	0.00625
+14	GO:0006777	Mo-molybdopterin cofactor biosynthetic process	12	3	0.43	0.0079	Mo-molybdopterin cofactor biosynthetic process	12	3	0.43	0.00812
+15	GO:0031425	chloroplast RNA processing	36	5	1.29	0.0087	chloroplast RNA processing	33	4	1.19	0.03024
+16	GO:0010197	polar nucleus fusion	37	5	1.32	0.0098	polar nucleus fusion	38	5	1.37	0.01140
+17	GO:0034504	protein localization to nucleus	75	5	2.68	0.0098	protein localization to nucleus	75	5	2.71	0.01352
+18	GO:0042793	plastid transcription	23	4	0.82	0.0099	plastid transcription	18	4	0.65	0.00346
+19	GO:0006534	cysteine metabolic process	33	4	1.18	0.0100	cysteine metabolic process	31	4	1.12	0.00625
+20	GO:0071826	protein-RNA complex organization	121	6	4.33	0.0119	protein-RNA complex organization	138	7	4.99	0.00382
+21	GO:0030422	siRNA processing	34	5	1.22	0.0123	siRNA processing	36	5	1.3	0.01266
+22	GO:0006782	protoporphyrinogen IX biosynthetic process	15	3	0.54	0.0150	protoporphyrinogen IX biosynthetic process	22	3	0.8	0.04352
+23	GO:0031122	cytoplasmic microtubule organization	98	4	3.51	0.0175	cytoplasmic microtubule organization	93	4	3.36	0.03175
+24	GO:0009250	glucan biosynthetic process	208	6	7.44	0.0176	glucan biosynthetic process	223	6	8.07	0.01800
+25	GO:0035194	regulatory ncRNA-mediated post-transcriptional gene silencing	68	8	2.43	0.0187	regulatory ncRNA-mediated post-transcriptional gene silencing	69	8	2.5	0.02926
+26	GO:1902969	mitotic DNA replication	17	3	0.61	0.0238	mitotic DNA replication	13	3	0.47	0.01027
+27	GO:0006551	leucine metabolic process	24	3	0.86	0.0310	leucine metabolic process	18	3	0.65	0.01776
+28	GO:0007030	Golgi organization	34	4	1.22	0.0322	Golgi organization	36	5	1.3	0.00908
+29	GO:0006353	DNA-templated transcription termination	34	4	1.22	0.0322	DNA-templated transcription termination	31	4	1.12	0.02460
+30	GO:0006614	SRP-dependent cotranslational protein targeting to membrane	20	3	0.72	0.0330	SRP-dependent cotranslational protein targeting to membrane	21	3	0.76	0.03859
+31	GO:0048868	pollen tube development	221	12	7.91	0.0351	pollen tube development	230	13	8.32	0.02707
+32	GO:0071824	protein-DNA complex organization	399	16	14.28	0.0357	protein-DNA complex organization	413	16	14.94	0.03617
+33	GO:1902750	negative regulation of cell cycle G2/M phase transition	13	2	0.47	0.0357	negative regulation of cell cycle G2/M phase transition	15	2	0.54	0.03615
+34	GO:0044782	cilium organization	31	2	1.11	0.0358	cilium organization	28	2	1.01	0.03617
+35	GO:0050776	regulation of immune response	156	6	5.58	0.0358	regulation of immune response	160	5	5.79	0.03628
+36	GO:0019288	isopentenyl diphosphate biosynthetic process, methylerythritol 4-phosphate pathway	21	3	0.75	0.0375	isopentenyl diphosphate biosynthetic process, methylerythritol 4-phosphate pathway	22	3	0.8	0.04352
+37	GO:0051345	positive regulation of hydrolase activity	27	3	0.97	0.0389	positive regulation of hydrolase activity	27	3	0.98	0.03162
+38	GO:0040034	regulation of development, heterochronic	73	4	2.61	0.0390	regulation of development, heterochronic	72	4	2.6	0.04853
+39	GO:0010099	regulation of photomorphogenesis	32	4	1.15	0.0474	regulation of photomorphogenesis	29	4	1.05	0.02557
