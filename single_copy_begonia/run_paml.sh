@@ -41,7 +41,7 @@ mv *.codeml.out  paml_begonia_foreground
 
 # use the same alignments we generated above
 
-for i in `ls *fa`; 
+for i in `ls *.codeml.fa`; 
 do orthogroup=`basename $i | cut -d"." -f 1`; 
 paml_input=$orthogroup".codeml.fa";
 paml_output=$orthogroup".codeml.out";
