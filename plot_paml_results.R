@@ -5,7 +5,8 @@ library(readr)
 library(reshape2)
 library(ggtree)
 library(cowplot)
-
+library(pheatmap)
+library(GOSemSim)
 
 #################################################################################################
 #     plot boxplot of dN/dS in significant orthogroups in foreground and background branches    #
@@ -89,4 +90,55 @@ two
 dev.off()
 
 
+#################################
+#.     go semantic clustering.  #
+#################################
+
+# get Arabidopsis annotation
+atGO <- godata('org.At.tair.db', ont="BP")
+
+# read in begonia and cyrtandra analysis GO terms
+begonia_enriched_terms_semSim<-read_delim("single_copy_begonia/begonia_enriched_terms", col_names = FALSE) %>% filter(as.numeric(X7) < 0.05 & as.numeric(X12) < 0.05 & X5/X4 > 0.1) %>% pull(X2, X3)
+cyrtandra_enriched_terms_semSim<-read_delim("single_copy_cyrtandra/cyrtandra_enriched_terms", col_names = FALSE) %>% filter(as.numeric(X7) < 0.05 & as.numeric(X12) < 0.05 & X5/X4 > 0.1) %>% pull(X2, X3)
+
+# set rows as begonia, cols as cyrtandra
+begonia_cyrtandra_semSim_result<-mgoSim(begonia_enriched_terms_semSim, cyrtandra_enriched_terms_semSim, semData=atGO, measure="Wang", combine=NULL)
+colnames(begonia_cyrtandra_semSim_result) <- names(cyrtandra_enriched_terms_semSim)
+rownames(begonia_cyrtandra_semSim_result) <- names(begonia_enriched_terms_semSim)
+
+# edit names of GO terms so they fit better
+rownames(begonia_cyrtandra_semSim_result)[rownames(begonia_cyrtandra_semSim_result) == "negative regulation of plant-type hypersensitive response"] <- "-ve reg. of plant-type hypersensitive response"
+rownames(begonia_cyrtandra_semSim_result)[rownames(begonia_cyrtandra_semSim_result) == "'de novo' pyrimidine nucleobase biosynthetic process"] <- "'de novo' pyrimidine nucleobase bioynth. process" 
+colnames(begonia_cyrtandra_semSim_result)[colnames(begonia_cyrtandra_semSim_result) == "negative regulation of post-translational protein modification"] <- "-ve regulation of post-transltnl. prot. modification"
+rownames(begonia_cyrtandra_semSim_result)[rownames(begonia_cyrtandra_semSim_result) == "isopentenyl diphosphate biosynthetic process, methylerythritol 4-phosphate pathway"] <- "isopentenyl diphosphate biosynth. proc."
+colnames(begonia_cyrtandra_semSim_result)[colnames(begonia_cyrtandra_semSim_result) == "isopentenyl diphosphate biosynthetic process, methylerythritol 4-phosphate pathway"] <- "isopentenyl diphosphate biosynth. proc."
+colnames(begonia_cyrtandra_semSim_result)[colnames(begonia_cyrtandra_semSim_result) == "SRP-dependent cotranslational protein targeting to membrane"] <- "SRP-depndt cotrans. prot. targeting to membrane"
+colnames(begonia_cyrtandra_semSim_result)[colnames(begonia_cyrtandra_semSim_result) == "isopentenyl diphosphate biosynthetic process, methylerythritol 4-phosphate pathway"] <- "isopentenyl diphosphate biosynth. proc."
+colnames(begonia_cyrtandra_semSim_result)[colnames(begonia_cyrtandra_semSim_result) == "regulatory ncRNA-mediated post-transcriptional gene silencing"] <- "reg. ncRNA-mediated post-transcptnl gene silencing"
+rownames(begonia_cyrtandra_semSim_result)[rownames(begonia_cyrtandra_semSim_result) == "protein quality control for misfolded or incompletely synthesized proteins"] <- "prot QC for misfolded or incompletely synth. proteins"
+rownames(begonia_cyrtandra_semSim_result)[rownames(begonia_cyrtandra_semSim_result) == "regulation of post-transcriptional gene silencing by regulatory ncRNA"] <- "reg of post-transcptnl gene silencing by reg ncRNA"
+
+
+
+
+
+annotation_row <- data.frame(Begonia = rep("Begonia", nrow(begonia_cyrtandra_semSim_result))) %>% set_rownames(rownames(begonia_cyrtandra_semSim_result))
+annotation_col <- data.frame(Cyrtandra = rep("Cyrtandra", ncol(begonia_cyrtandra_semSim_result))) %>% set_rownames(colnames(begonia_cyrtandra_semSim_result))
+ann_colors = list(
+  Begonia = c("Begonia"="firebrick"),
+  Cyrtandra = c("Cyrtandra"="#1B9E77"))
+
+pdf("GO_terms_relaxed_selection_heatmap.pdf", width=22, height=20)
+pheatmap((begonia_cyrtandra_semSim_result), 
+         treeheight_row=0, 
+         treeheight_col=0, 
+         fontsize = 25, 
+         legend=F, 
+         angle_col=315,
+         annotation_col = annotation_col,
+         annotation_row = annotation_row,
+         annotation_legend=FALSE,
+         clustering_method="ward",
+         annotation_colors = ann_colors)
+dev.off()
 
