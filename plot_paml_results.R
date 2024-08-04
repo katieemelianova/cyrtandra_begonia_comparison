@@ -98,8 +98,8 @@ dev.off()
 atGO <- godata('org.At.tair.db', ont="BP")
 
 # read in begonia and cyrtandra analysis GO terms
-begonia_enriched_terms_semSim<-read_delim("single_copy_begonia/begonia_enriched_terms", col_names = FALSE) %>% filter(as.numeric(X7) < 0.05 & as.numeric(X12) < 0.05 & X5/X4 > 0.1) %>% pull(X2, X3)
-cyrtandra_enriched_terms_semSim<-read_delim("single_copy_cyrtandra/cyrtandra_enriched_terms", col_names = FALSE) %>% filter(as.numeric(X7) < 0.05 & as.numeric(X12) < 0.05 & X5/X4 > 0.1) %>% pull(X2, X3)
+begonia_enriched_terms_semSim<-read_delim("single_copy_begonia/begonia_enriched_terms", col_names = TRUE) %>% filter(as.numeric(classicFisher.x) < 0.05 & as.numeric(classicFisher.y) < 0.05 & Significant.x/Annotated.x > 0.1) %>% pull(GO.ID, Term.x)
+cyrtandra_enriched_terms_semSim<-read_delim("single_copy_cyrtandra/cyrtandra_enriched_terms", col_names = TRUE) %>% filter(as.numeric(classicFisher.x) < 0.05 & as.numeric(classicFisher.y) < 0.05 & Significant.x/Annotated.x > 0.1) %>% pull(GO.ID, Term.x)
 
 # set rows as begonia, cols as cyrtandra
 begonia_cyrtandra_semSim_result<-mgoSim(begonia_enriched_terms_semSim, cyrtandra_enriched_terms_semSim, semData=atGO, measure="Wang", combine=NULL)
