@@ -142,3 +142,30 @@ pheatmap((begonia_cyrtandra_semSim_result),
          annotation_colors = ann_colors)
 dev.off()
 
+
+
+
+#############################################################################################################################
+#      test to see if there is a significant difference between cyrtandra and begonia background and foreground branches    #
+#############################################################################################################################
+
+
+# begonia
+t.test(begonia_dnds$foreground, begonia_dnds$background, paired = TRUE, alternative = "greater")
+
+# cyrtandra
+t.test(cyrtandra_dnds$foreground, cyrtandra_dnds$background, paired = TRUE, alternative = "greater")
+
+
+
+####################################################################
+#     get summary statistics of dnds in significant orthogroups    #
+####################################################################
+
+dnds %>% filter(Genus == "Cyrtandra", variable == "foreground") %>% dplyr::select(value) %>% summary()
+dnds %>% filter(Genus == "Cyrtandra", variable == "background") %>% dplyr::select(value) %>% summary()
+
+dnds %>% filter(Genus == "Begonia", variable == "foreground") %>% dplyr::select(value) %>% summary()
+dnds %>% filter(Genus == "Begonia", variable == "background") %>% dplyr::select(value) %>% summary()
+
+
