@@ -60,4 +60,7 @@ ser_enrich %<>% filter(as.numeric(classicFisher) < 0.05)
 both_enrich<-inner_join(cro_enrich, ser_enrich, by="GO.ID")
 cols_to_select<-c("GO.ID", "Term.x", "Annotated.x", "Significant.x", "Expected.x", "classicFisher.x", "Term.y", "Annotated.y", "Significant.y", "Expected.y", "classicFisher.y")
 both_enrich %<>% dplyr::select(cols_to_select)
-write.table(both_enrich, file="cyrtandra_enriched_terms", quote=FALSE, col.names=FALSE, sep="\t")
+write.table(both_enrich, file="cyrtandra_enriched_terms", quote=FALSE, row.names=FALSE, sep="\t")
+
+write.table(cro_enrich, file="S3_ccrockerella_enriched_terms", quote=FALSE, row.names=FALSE, sep="\t")
+write.table(ser_enrich, file="S4_cserratifolia_enriched_terms", quote=FALSE, row.names=FALSE, sep="\t")
