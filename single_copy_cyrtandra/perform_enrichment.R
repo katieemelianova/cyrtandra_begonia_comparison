@@ -44,8 +44,12 @@ get_enriched_terms<-function(gene_list, mappings){
 
 
 
-crockerella_significant_transcripts<-read.table("crockerella_significant_transcripts") %>% dplyr::select(V1) %>% pull()
-serratifolia_significant_transcripts<-read.table("serratifolia_significant_transcripts") %>% dplyr::select(V1) %>% pull()
+#crockerella_significant_transcripts<-read.table("crockerella_significant_transcripts") %>% dplyr::select(V1) %>% pull()
+#serratifolia_significant_transcripts<-read.table("serratifolia_significant_transcripts") %>% dplyr::select(V1) %>% pull()
+crockerella_significant_transcripts<-read.table("crockerella_significant_transcripts") %>% dplyr::select(V1) %>% pull() %>% paste("TRINITY_", ., sep="")
+serratifolia_significant_transcripts<-read.table("serratifolia_significant_transcripts") %>% dplyr::select(V1) %>% pull() %>% paste("TRINITY_", ., sep="")
+
+
 
 cro_enrich<-get_enriched_terms(crockerella_significant_transcripts, mp_cro)
 ser_enrich<-get_enriched_terms(serratifolia_significant_transcripts, mp_ser)
