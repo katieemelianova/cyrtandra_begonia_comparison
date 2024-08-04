@@ -72,7 +72,7 @@ orthogroup_plot<-ggplot(data = sig_nonsig, aes(y = number_orthogroups, x=genus,
   scale_colour_manual(values = c("royalblue1", "violetred"))
 
 #png("significant_nonsignificant_orthogroups.png", width=2700, height=2000)
-pdf("significant_nonsignificant_orthogroups.pdf", width=35, height=32)
+pdf("Figure1_significant_nonsignificant_orthogroups.pdf", width=35, height=32)
 one<-plot_grid(tree_plot, 
           orthogroup_plot, 
           ncol = 1,
@@ -128,7 +128,7 @@ ann_colors = list(
   Begonia = c("Begonia"="firebrick"),
   Cyrtandra = c("Cyrtandra"="#1B9E77"))
 
-pdf("GO_terms_relaxed_selection_heatmap.pdf", width=22, height=20)
+pdf("Figure2_GO_terms_relaxed_selection_heatmap.pdf", width=22, height=20)
 pheatmap((begonia_cyrtandra_semSim_result), 
          treeheight_row=0, 
          treeheight_col=0, 
